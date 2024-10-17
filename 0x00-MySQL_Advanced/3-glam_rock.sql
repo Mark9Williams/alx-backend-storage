@@ -1,21 +1,21 @@
--- a SQL script that lists all bands with Glam rock as their main style, ranked by their longevity
+-- Create a script to list all bands with Glam rock as their main style, ranked by longevity
 
--- Creating a common table expression (CTE) called glam_rock_bands
-WITH glam_rock_bands AS (
-    SELECT
+-- Use a common table expression (CTE) to calculate lifespan for clarity
+WITH band_lifespans AS (
+    SELECT 
         band_name,
-        COALESCE(split, 20222) - formed AS lifespan
-    FROM
+        COALESCE(split, 2022) - formed AS lifespan
+    FROM 
         metal_bands
-    WHERE
-        style LIKe '%Glam rock%'
+    WHERE 
+        style LIKE '%Glam rock%'
 )
 
--- Selecting the name and lifespan of the bands from the CTE, ordering by lifespan in descending order
-SELECT
-    band_name,
+-- Select the desired columns and order by lifespan in descending order
+SELECT 
+    band_name, 
     lifespan
-FROM
-    glam_rock_bands
-ORDER BY
+FROM 
+    band_lifespans
+ORDER BY 
     lifespan DESC;
