@@ -1,19 +1,22 @@
+-- a SQL script that creates a function SafeDiv that handles division by zero.
+-- Change the delimiter to something else (e.g., //)
+DELIMITER //
+
 -- Drop the function if it already exists
-DROP FUNCTION IF EXISTS SafeDiv;
+DROP FUNCTION IF EXISTS SafeDiv//
 
 -- Create the SafeDiv function
-DELIMITER $$
-
-CREATE FUNCTION SafeDiv(a INT, b INT) 
-RETURNS DECIMAL(10, 2)  -- The function returns a decimal value, adjust the precision if needed
-DETERMINISTIC  -- Specifies that the function always returns the same result for the same inputs
+CREATE FUNCTION SafeDiv(a INT, b INT)
+RETURNS FLOAT
+DETERMINISTIC
 BEGIN
-    -- If b is 0, return 0, otherwise return a / b
+    -- Check if the second number (b) is 0
     IF b = 0 THEN
-        RETURN 0;
+        RETURN 0; -- Return 0 if b is 0
     ELSE
-        RETURN a / b;
+        RETURN a / b; -- Otherwise return a / b
     END IF;
-END$$
+END//
 
+-- Change the delimiter back to semicolon
 DELIMITER ;
