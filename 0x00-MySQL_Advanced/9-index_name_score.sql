@@ -1,7 +1,3 @@
--- Create an index idx_name_first_score on the first letter of the name column and the score column in the names table
-
--- Make sure to adjust the database context if needed
-USE your_database_name;  -- Replace with the actual name of your database
-
--- Create the index
-CREATE INDEX idx_name_first_score ON names (SUBSTRING(name, 1, 1), score);
+-- a SQL script that creates an index idx_name_first_score on the table names and the first letter of name and the score.
+-- Create a composite index on the first letter of 'name' and the 'score' column
+CREATE INDEX idx_name_first_score ON names (name(1), score);
