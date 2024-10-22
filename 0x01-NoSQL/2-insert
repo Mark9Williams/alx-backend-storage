@@ -1,0 +1,1 @@
+mongo "$1" --quiet --eval 'db.school.insert({ "name": "Holberton School" })'
