@@ -1,2 +1,2 @@
-# Switch to the 'my_db' database (it will be created if it does not exist)
-mongo --quiet --eval "use my_db"
+// a script that creates or uses the database my_db
+use my_db

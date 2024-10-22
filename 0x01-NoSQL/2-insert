@@ -1,1 +1,2 @@
-mongo "$1" --quiet --eval 'db.school.insert({ "name": "Holberton School" })'
+// a script that inserts a document in the collection school
+db.school.insert({name: "Holberton school"})
