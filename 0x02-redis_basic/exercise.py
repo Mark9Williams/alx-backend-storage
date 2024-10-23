@@ -7,10 +7,12 @@ from typing import Union
 
 class Cache:
     def __init__(self) -> None:
+        """Constructor method"""
         self._redis = redis.Redis()
         self._redis.flushdb()  # Clear the Redis database
 
     def store(self, data: Union[str, bytes, int, float]) -> str:
+        """Store the input data in Redis"""
         key = str(uuid.uuid4())  # Generate a random key
         self._redis.set(key, data)  # Store the data in Redis
         return key  # Return the generated key
