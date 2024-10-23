@@ -42,7 +42,6 @@ def replay(method: Callable) -> None:
     Display the history of calls of a particular function.
     Uses Redis keys to retrieve inputs and outputs of previous calls.
     """
-    # Define Redis list keys for the inputs and outputs
     input_key = f"{method.__qualname__}:inputs"
     output_key = f"{method.__qualname__}:outputs"
 
