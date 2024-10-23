@@ -2,7 +2,7 @@
 """Implementing a Cache class"""
 import uuid
 import redis
-from typing import Union
+from typing import Union, Optional, Callable
 
 
 class Cache:
@@ -16,3 +16,25 @@ class Cache:
         key = str(uuid.uuid4())  # Generate a random key
         self._redis.set(key, data)  # Store the data in Redis
         return key  # Return the generated key
+
+    def get(
+        self, key: str, fn: Optional[Callable] = None
+    ) -> Optional[Union[str, int, float]]:
+        """Retrieve a value from Redis and convert it using callable."""
+        value = self._redis.get(key)  # Get the value from Redis
+
+        if value is None:
+            return None  # Return None if the key does not exist
+
+        if fn:
+            return fn(value)  # Convert the value using the provided callable
+
+        return value  # Return the raw value if no conversion function
+
+    def get_str(self, key: str) -> Optional[str]:
+        """Get a string value from Redis."""
+        return self.get(key, fn=lambda d: d.decode("utf-8"))
+
+    def get_int(self, key: str) -> Optional[int]:
+        """Get an integer value from Redis."""
+        return self.get(key, fn=int)
