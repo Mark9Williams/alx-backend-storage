@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Implementing a Cache class"""
+
 import uuid
 import redis
 from typing import Union, Optional, Callable
