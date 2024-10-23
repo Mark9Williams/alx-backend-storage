@@ -1,44 +1,45 @@
 #!/usr/bin/env python3
-"""Implementing an expiring web cache and tracker"""
+"""Implementing a web page caching system with Redis."""
 import redis
 import requests
-import time
-from functools import wraps
+from typing import Callable
+import functools
 
-# Initialize Redis client
-redis_client = redis.Redis()
-
-
-def cache_page(expiration: int):
-    """Decorator to cache the page and track access count."""
-    def decorator(func):
-        @wraps(func)
-        def wrapper(url: str) -> str:
-            # Key for caching the page content
-            cache_key = f"cache:{url}"
-            count_key = f"count:{url}"
-
-            # Check if the content is already cached
-            cached_content = redis_client.get(cache_key)
-            if cached_content:
-                # Increment the access count and return cached content
-                redis_client.incr(count_key)
-                return cached_content.decode("utf-8")
-
-            # Call the original function to get the page content
-            page_content = func(url)
-
-            # Cache the content with expiration and update the count
-            redis_client.set(cache_key, page_content, ex=expiration)
-            redis_client.incr(count_key)
-
-            return page_content
-        return wrapper
-    return decorator
+# Connect to Redis
+r = redis.Redis()
 
 
-@cache_page(expiration=10)
+def count_requests(method: Callable) -> Callable:
+    """Decorator to count the number of times a URL is accessed."""
+    @functools.wraps(method)
+    def wrapper(url: str) -> str:
+        # Increment the access count for the URL
+        r.incr(f"count:{url}")
+        return method(url)
+    return wrapper
+
+
+def cache_page(method: Callable) -> Callable:
+    """Decorator to cache the HTML content of a URL for 10 seconds."""
+    @functools.wraps(method)
+    def wrapper(url: str) -> str:
+        # Check if the result is already cached
+        cached_content = r.get(f"cached:{url}")
+        if cached_content:
+            return cached_content.decode('utf-8')
+
+        # If not cached, call the original method
+        result = method(url)
+
+        # Cache the result for 10 seconds
+        r.setex(f"cached:{url}", 10, result)
+        return result
+    return wrapper
+
+
+@count_requests
+@cache_page
 def get_page(url: str) -> str:
-    """Fetch the HTML content of a URL."""
+    """Retrieve the HTML content of a URL and cache it for 10 seconds."""
     response = requests.get(url)
     return response.text
